@@ -1,0 +1,140 @@
+---
+title: "OKC Thunder Technical Assessment R Notebook"
+author: "Nathan Knox"
+output: html_notebook
+---
+```{r}
+#clearing the workspace and loading necessary packages
+rm(list=ls())
+library(readr)
+library(tidyverse)
+
+shots_data <- read.csv(file = "Project File/shots_data.csv")
+
+#Splitting the data between Team A and Team B
+shots_TeamA <- shots_data %>% 
+  filter(team == "Team A")
+shots_TeamB <- shots_data %>% 
+  filter(team == "Team B") 
+```
+
+```{r}
+# Filtering shots made within Two Points Zone for Team A
+s_2PTA <- shots_TeamA %>%
+  filter((x <= 22 & y <= 7.8) & (x >= -22 & y <= 7.8) | ((x <= 23.75 & y > 7.8) & (x >= -23.75 & y > 7.8)))
+
+# Calculating shot distribution for Two Point Zone
+s.2PTA = 262/280 
+s.2PTA = s.2PTA * 100
+
+sum(s_2PTA$fgmade)
+```
+
+```{r}
+# Computing eFG for 2PT Zone Team A
+s.2PTAeFG = 116 / nrow(s_2PTA) 
+s.2PTAeFG = s.2PTAeFG * 100
+head(s.2PTAeFG)
+```
+
+```{r}
+# Filtering shots within Non Corner 3 Zone for Team A
+s_NC3A <- shots_TeamA %>%
+  filter((x >= 23.75 & y > 7.8) | (x<= -23.75 & y > 7.8))
+
+# Calculating shot distribution for Non Corner 3 Zone
+s.NC3A = 0/280
+
+sum(s_NC3A$fgmade)
+```
+
+```{r}
+# Marking eFG for Non Corner 3 Zone for Team A
+s.NC3AeFG = 0
+
+# Filtering shots within Corner 3 Zone for Team A
+s_C3A <- shots_TeamA %>%
+  filter((x >= 22 & y <= 7.8) | (x <= -22 & y <= 7.8))
+
+# Calculating shot distribution for Corner 3 Zone
+s.C3A = 18/280 
+s.C3A = s.C3A * 100
+
+sum(s_C3A$fgmade) 
+```
+
+```{r}
+# Computing eFG for COrner 3 Zone Team A 
+s.C3AeFG = (9 + (0.5*9)) / nrow(s_C3A)
+s.C3AeFG = s.C3AeFG * 100
+head(s.C3AeFG)
+```
+
+```{r}
+# At this point I am doing the same calculations that I did for Team A, but for
+# Team B this time
+
+# 2PT Zone
+s_2PTB <- shots_TeamB %>%
+  filter((x <= 22 & y<= 7.8)  & (x >= -22 & y <= 7.8) | ((x <= 23.75 & y > 7.8) & (x>= -23.75 & y > 7.8)))
+s.2PTB = 213/224 
+s.2PTB = s.2PTB * 100
+
+sum(s_2PTB$fgmade)
+```
+
+```{r}
+s.2PTBeFG = 88 / nrow(s_2PTB)
+s.2PTBeFG = s.2PTBeFG * 100
+head(s.2PTBeFG)
+```
+
+```{r}
+#Non Corner 3
+s_NC3B <- shots_TeamB %>%
+  filter((x >= 23.75 & y > 7.8) | (x<= -23.75 & y > 7.8))
+s.NC3B = 0/280
+
+sum(s_NC3B$fgmade)
+```
+
+```{r}
+s.NC3BeFG = 0
+head(s.NC3BeFG)
+```
+
+```{r}
+# Corner 3
+s_C3B <- shots_TeamB %>%
+  filter((x >= 22 & y <= 7.8) | (x <= -22 & y <= 7.8))
+s.C3B = 12/280 
+s.C3B = s.C3B * 100
+
+sum(s_C3B$fgmade)
+```
+
+```{r}
+s.C3BeFG = (4 + (0.5*4)) / nrow(s_C3A)
+s.C3BeFG = s.C3BeFG * 100
+head(s.C3BeFG)
+```
+
+```{r}
+# Completed table for Team A
+TeamA_SummaryTable <- data.frame(
+                       ShotZone = c("2PT", "Non Corner 3", "Corner 3"),
+                       ShotDistribution = c(round(s.2PTA, 3), round(s.NC3A, 3), round(s.C3A, 3)),
+                      eFG = c( round(s.2PTAeFG, 3), round(s.NC3AeFG, 3), round(s.C3AeFG, 3)))
+
+head(TeamA_SummaryTable)
+```
+
+```{r}
+# Completed table for Team B
+TeamB_SummaryTable <- data.frame(
+                       ShotZone = c("2PT", "Non Corner 3", "Corner 3"),
+                       ShotDistribution = c(round(s.2PTB,3), round(s.NC3B, 3), round(s.C3B, 3)),
+                      eFG = c(round(s.2PTBeFG, 3), round(s.NC3BeFG, 3), round(s.C3BeFG, 3)))
+
+head(TeamB_SummaryTable)
+```
